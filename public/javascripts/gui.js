@@ -1763,13 +1763,7 @@ IDE_Morph.makeSocket = function (myself, shareboxId) {
 
     sharer.socket.on('ANNOUNCEMENT', function(data){
         if(data.room !== tempIdentifier){
-            alert(data.content);
-            var announcementAck = {
-                room: data.room,
-                id: data.id,
-                clientId: tempIdentifier
-            };
-            myself.sharer.socket.emit('READ_ANNOUNCEMENT', announcementAck);
+            myself.showAnnouncementPopup(data);
         }
     })
 
@@ -2509,9 +2503,75 @@ IDE_Morph.prototype.showShareBoxDisconnectedWindow = function () {
 
 // * * * * * * * * * View Members Popup * * * * * * * * * * * * * * * * *
 
-IDE_Morph.prototype.announcemnetPopup = function() {
+IDE_Morph.prototype.showAnnouncementPopup = function(data) {
+  var world = this.world();
+  var myself = this;
+  var popupWidth = 400;
+  var popupHeight = 330;
 
-}
+  if (this.annoucementPopup) {
+    this.announcementPopup.destroy();
+  }
+
+  this.announcementPopup = new DialogBoxMorph();
+  this.announcementPopup.setExtent(new Point(popupWidth, popupHeight));
+
+  button = new PushButtonMorph(
+    this,
+    null,
+    (String.fromCharCode("0xf00d")),
+    null,
+    null,
+    null,
+    "redCircleIconButton"
+  );
+
+  button.setRight(this.announcementPopup.right() - 3);
+  button.setTop(this.announcementPopup.top() + 2);
+  button.action = function () {
+    var announcementAck = {
+        room: data.room,
+        id: data.id,
+        clientId: tempIdentifier
+    };
+    myself.sharer.socket.emit('READ_ANNOUNCEMENT', announcementAck);
+    myself.announcementPopup.cancel();
+  };
+
+  button.drawNew();
+  button.fixLayout();
+  this.announcementPopup.add(button);
+
+  // add title
+  this.announcementPopup.labelString = "Annoucement";
+  this.announcementPopup.createLabel();
+
+  // message
+  txt = new TextMorph(data.content);
+  txt.setCenter(this.announcementPopup.center());
+  this.announcementPopup.add(txt);
+  txt.drawNew();
+
+  // "got it!" button, closes the dialog.
+  okButton = new PushButtonMorph(null, null, "Got it!", null, null, null, "green");
+  okButton.setCenter(this.announcementPopup.center());
+  okButton.setBottom(this.announcementPopup.bottom() - 10);
+  okButton.action = function() {
+    var announcementAck = {
+        room: data.room,
+        id: data.id,
+        clientId: tempIdentifier
+    };
+    myself.sharer.socket.emit('READ_ANNOUNCEMENT', announcementAck);
+    myself.announcementPopup.cancel();
+  };
+  this.announcementPopup.add(okButton);
+
+  // popup
+  this.announcementPopup.drawNew();
+  this.announcementPopup.fixLayout();
+  this.announcementPopup.popUp(world);
+};
 
 IDE_Morph.prototype.showAnnouncementReadPopup = function() {
   var world = this.world();
