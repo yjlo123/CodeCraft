@@ -228,7 +228,8 @@ io.sockets.on('connection', function(socket){
 		})
 
 		socket.on('SEND_ANNOUNCEMENT', function(data) {
-			if(!(_.isUndefined(clients[data.room]))){
+			if(!(_.isUndefined(clients[data.room]))
+					&& clients[data.room].members.length > 1){
 				console.log(clients[data.room]);
 				var d = new Date();
 				var announementId = d.getTime();
@@ -238,7 +239,7 @@ io.sockets.on('connection', function(socket){
 				}
 				data.id = announementId;
 				io.to(data.room).emit('ANNOUNCEMENT', data);
-				console.log("=========\n");
+				console.log("==== Announcement Record ====\n");
 				console.log(announcements);
 			}
 		})

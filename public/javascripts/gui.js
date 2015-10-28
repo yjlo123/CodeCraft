@@ -2978,7 +2978,7 @@ IDE_Morph.prototype.showMakeAnnouncementPopup = function() {
     this.makeAnnouncementPopup.add(sendButton);
 
     // add title
-    this.makeAnnouncementPopup.labelString = "Make an Announcement";
+    this.makeAnnouncementPopup.labelString = "Make Announcements";
     this.makeAnnouncementPopup.createLabel();
 
     // popup
@@ -6159,11 +6159,13 @@ IDE_Morph.prototype.shareBoxSettingsMenu = function() {
         pos = this.shareBoxTitleBarButtons.shareBoxSettingsButton.bottomLeft();
 
     menu = new MenuMorph(this);
-    menu.addItem(
-        'Make an Announcement',
-        'showMakeAnnouncementPopup'
-    );
-    menu.addLine();
+    if(this.shareboxId == tempIdentifier){
+        menu.addItem(
+            'Make Announcements',
+            'showMakeAnnouncementPopup'
+        );
+        menu.addLine();
+    }
     menu.addItem(
         'View/Edit Members',
         'showViewMembersPopup'
