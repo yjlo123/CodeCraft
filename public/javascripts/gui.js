@@ -1775,7 +1775,7 @@ IDE_Morph.makeSocket = function (myself, shareboxId) {
 
     sharer.socket.on('ALL_READ', function(data){
         if(data.clientId == tempIdentifier){
-            alert("All read.");
+            myself.showAnnouncementReadPopup();
         }
     })
 
@@ -2512,6 +2512,79 @@ IDE_Morph.prototype.showShareBoxDisconnectedWindow = function () {
 IDE_Morph.prototype.announcemnetPopup = function() {
 
 }
+
+IDE_Morph.prototype.showAnnouncementReadPopup = function() {
+  var world = this.world();
+  var myself = this;
+  var popupWidth = 400;
+  var popupHeight = 330;
+
+  if (this.announcementReadPopup) {
+    this.announcementReadPopup.destroy();
+  }
+
+  this.announcementReadPopup = new DialogBoxMorph();
+  this.announcementReadPopup.setExtent(new Point(popupWidth, popupHeight));
+
+  button = new PushButtonMorph(
+    this,
+    null,
+    (String.fromCharCode("0xf00d")),
+    null,
+    null,
+    null,
+    "redCircleIconButton"
+  );
+
+  button.setRight(this.announcementReadPopup.right() - 3);
+  button.setTop(this.announcementReadPopup.top() + 2);
+  button.action = function () { myself.announcementReadPopup.cancel(); };
+  button.drawNew();
+  button.fixLayout();
+  this.announcementReadPopup.add(button);
+
+  // add title
+  this.announcementReadPopup.labelString = "Annoucement";
+  this.announcementReadPopup.createLabel();
+
+  // success image
+  var successImage = new Morph();
+  successImage.texture = 'images/success.png';
+  successImage.drawNew = function () {
+      this.image = newCanvas(this.extent());
+      var context = this.image.getContext('2d');
+      var picBgColor = myself.announcementReadPopup.color;
+      context.fillStyle = picBgColor.toString();
+      context.fillRect(0, 0, this.width(), this.height());
+      if (this.texture) {
+          this.drawTexture(this.texture);
+      }
+  };
+
+  successImage.setExtent(new Point(128, 128));
+  successImage.setCenter(this.announcementReadPopup.center());
+  successImage.setTop(this.announcementReadPopup.top() + 40);
+  this.announcementReadPopup.add(successImage);
+
+  // success message
+  txt = new TextMorph("All members in the sharebox have read the announcement!");
+  txt.setCenter(this.announcementReadPopup.center());
+  txt.setTop(successImage.bottom() + 20);
+  this.announcementReadPopup.add(txt);
+  txt.drawNew();
+
+  // "got it!" button, closes the dialog.
+  okButton = new PushButtonMorph(null, null, "Alright!", null, null, null, "green");
+  okButton.setCenter(this.announcementReadPopup.center());
+  okButton.setBottom(this.announcementReadPopup.bottom() - 10);
+  okButton.action = function() { myself.announcementReadPopup.cancel(); };
+  this.announcementReadPopup.add(okButton);
+
+  // popup
+  this.announcementReadPopup.drawNew();
+  this.announcementReadPopup.fixLayout();
+  this.announcementReadPopup.popUp(world);
+};
 
 // xinni: Displays a list of group members. Condition: must be in group.
 IDE_Morph.prototype.showViewMembersPopup = function() {
