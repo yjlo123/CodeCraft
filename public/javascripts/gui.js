@@ -2926,11 +2926,11 @@ IDE_Morph.prototype.showMakeAnnouncementPopup = function() {
     var popupWidth = 400;
     var popupHeight = 300;
 
-    if (this.addMemberPopup) {
-        this.addMemberPopup.destroy();
+    if (this.makeAnnouncementPopup) {
+        this.makeAnnouncementPopup.destroy();
     }
-    this.addMemberPopup = new DialogBoxMorph();
-    this.addMemberPopup.setExtent(new Point(popupWidth, popupHeight));
+    this.makeAnnouncementPopup = new DialogBoxMorph();
+    this.makeAnnouncementPopup.setExtent(new Point(popupWidth, popupHeight));
 
     // close dialog button
     button = new PushButtonMorph(
@@ -2943,54 +2943,48 @@ IDE_Morph.prototype.showMakeAnnouncementPopup = function() {
         "redCircleIconButton"
     );
 
-    button.setRight(this.addMemberPopup.right() - 3);
-    button.setTop(this.addMemberPopup.top() + 2);
-    button.action = function () { myself.addMemberPopup.cancel(); };
+    button.setRight(this.makeAnnouncementPopup.right() - 3);
+    button.setTop(this.makeAnnouncementPopup.top() + 2);
+    button.action = function () { myself.makeAnnouncementPopup.cancel(); };
     button.drawNew();
     button.fixLayout();
-    this.addMemberPopup.add(button);
+    this.makeAnnouncementPopup.add(button);
 
     // the text input box
     var announcementContentInput = new InputFieldMorph();
     announcementContentInput.setWidth(200);
-    announcementContentInput.setCenter(myself.addMemberPopup.center());
+    announcementContentInput.setCenter(myself.makeAnnouncementPopup.center());
     announcementContentInput.fontSize = 15;
     announcementContentInput.typeInPadding = 4;
     announcementContentInput.fixLayout();
     announcementContentInput.drawNew();
-    this.addMemberPopup.add(announcementContentInput);
+    this.makeAnnouncementPopup.add(announcementContentInput);
 
 
-    // "Add" Button
-    addButton = new PushButtonMorph(null, null, "Send", null, null, null, "green");
-    addButton.setCenter(myself.addMemberPopup.center());
-    addButton.setTop(announcementContentInput.bottom() + 10);
-    addButton.action = function () {
+    // "Send" Button
+    sendButton = new PushButtonMorph(null, null, "Send", null, null, null, "green");
+    sendButton.setCenter(myself.makeAnnouncementPopup.center());
+    sendButton.setTop(announcementContentInput.bottom() + 10);
+    sendButton.action = function () {
         var txtColor = new Color(204, 0, 0);
 
         var announcementContent = announcementContentInput.getValue();
 
         var socketData = {room:shareboxId, content:announcementContent};
         myself.sharer.socket.emit('SEND_ANNOUNCEMENT', socketData);
-
-
-        /*
-        myself.sharer.socket.on('RETURN_MEMBERS', function(data){
-            console.log(data);
-        });
-        */
+        myself.makeAnnouncementPopup.cancel();
     };
 
-    this.addMemberPopup.add(addButton);
+    this.makeAnnouncementPopup.add(sendButton);
 
     // add title
-    this.addMemberPopup.labelString = "Make an Announcement";
-    this.addMemberPopup.createLabel();
+    this.makeAnnouncementPopup.labelString = "Make an Announcement";
+    this.makeAnnouncementPopup.createLabel();
 
     // popup
-    this.addMemberPopup.drawNew();
-    this.addMemberPopup.fixLayout();
-    this.addMemberPopup.popUp(world);
+    this.makeAnnouncementPopup.drawNew();
+    this.makeAnnouncementPopup.fixLayout();
+    this.makeAnnouncementPopup.popUp(world);
 };
 
 
